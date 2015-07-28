@@ -1,0 +1,41 @@
+---
+# Install php 5.5
+- name: Install php 5.5 and required modules
+  apt: name={{ item }} state=present
+  with_items:
+  - php5
+  - php5-cli
+  - php5-mcrypt
+  - php5-xdebug
+  - php5-mysql
+  - libapache2-mod-php5
+  - php-apc
+  - php5-mysql
+  notify:
+  - restart apache
+- name: Enable php5 module for apache
+  apache2_module: name=php5 state=present
+  notify:
+  - restart apache
+- name: Copy modified PHP config files
+  copy: src=apache2/php.ini dest=/etc/php5/apache2/php.ini
+  notify:
+  - restart apache
+- name: Copy modified PHP config files
+  copy: src=cli/php.ini dest=/etc/php5/cli/php.ini
+  notify:
+  - restart apache
+- name: Copy modified PHP config files
+  copy: src=modules/opcache.ini dest=/etc/php5/mods-available/opcache.ini
+  notify:
+  - restart apache
+- name: Copy modified PHP config files
+  copy: src=modules/xdebug.ini dest=/etc/php5/mods-available/xdebug.ini
+  notify:
+  - restart apache
+- name: Enable required PHP modules
+  command: php5enmod mcrypt pdo
+  args:
+    creates: /etc/php5/apache2/conf.d/20-mcrypt.ini
+  notify:
+  - restart apache

@@ -1,0 +1,33 @@
+---
+# Install beanstalkd from source package
+- name: Copy and unpack Beanstalk source package
+  unarchive: src=beanstalkd-v1.10.tar.gz dest=/tmp creates /tmp/beanstalkd-1.10
+- name: Make install Beanstalk server
+  command: make install
+  args:
+    chdir: /tmp/beanstalkd-1.10
+    creates: /usr/local/bin/beanstalkd
+- name: Create beanstalkd binlog folder
+  file: path=/var/beanstalkd state=directory
+- name: Also set apache to listen to port *:81 which is what the management console uses
+  lineinfile: dest=/etc/apache2/ports.conf insertafter="^Listen 80" line="Listen 81" state=present
+  notify:
+  - restart apache
+- name: Copy and unarchive beanstalkd management interface
+  unarchive: src=beanstalk_console-1.6.1.zip dest=/usr/share creates=/usr/share/beanstalk_console-1.6.1/
+- name: Copy beanstalk-management vhost file
+  copy: src=beanstalkd.vhost.conf dest=/etc/apache2/sites-available/beanstalkd.vhost.conf
+  notify:
+  - restart apache
+- name: Enable beanstalk-management vhost
+  file: src=/etc/apache2/sites-available/beanstalkd.vhost.conf dest=/etc/apache2/sites-enabled/beanstalkd.vhost.conf state=link
+  notify:
+  - restart apache
+- name: Add local beanstalkd host to beanstalk-management configuration file
+  lineinfile: dest=/usr/share/beanstalk_console-1.6.1/config.php regexp="'servers' => array\((.)+?\),$" line="'servers' => array('beanstalk://localhost:11300'),"
+- name: Fix permissions for beanstalk-management
+  file: path=/usr/share/beanstalk_console-1.6.1/storage.json owner=www-data group=www-data
+- name: Add supervisord script
+  copy: src=beanstalkd.conf dest=/etc/supervisord/supervisord.conf.d/beanstalkd.conf
+  notify:
+    - restart supervisord

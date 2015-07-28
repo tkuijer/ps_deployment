@@ -1,0 +1,5 @@
+---
+- name: Install Node.js using Apt
+  apt: name=nodejs state=present
+- name: Install NPM
+  apt: name=npm state=present

@@ -1,0 +1,17 @@
+---
+# Install apache and required modules
+- name: Install apache
+  apt: name=apache2 state=present
+- name: Enable some required apache2 modules
+  apache2_module: name={{ item }} state=present
+  with_items:
+  - rewrite
+  - deflate
+  - filter
+  - headers
+- name: Replace default apache config
+  copy: src=apache.env.conf dest=/etc/apache2/envvars
+  notify:
+  - restart apache
+- name: Autostart Apache
+  service: name=apache2 state=started enabled=yes

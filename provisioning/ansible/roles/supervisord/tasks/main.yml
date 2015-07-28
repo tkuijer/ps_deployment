@@ -1,0 +1,21 @@
+---
+# Install Supervisord using pip
+
+- name: Install python easy install tools
+  shell: curl https://bootstrap.pypa.io/ez_setup.py -o - | python
+  args:
+    creates: /usr/local/bin/easy_install
+- name: Install pip using easy_install
+  easy_install: name=pip
+- name: Install supervisord with pip
+  pip: name=supervisor state=present
+- name: Copy Supervisord init script
+  copy: src=scripts/supervisord dest=/etc/init.d/supervisord mode="0755"
+- name: Copy Supervisord configuration scripts
+  copy: src=supervisord/ dest=/etc/supervisord/
+- name: Autostart supervisord on boot
+  command: update-rc.d supervisord defaults
+  args:
+    creates: /etc/rc2.d/S18supervisord
+- name: Start supervisord
+  service: name=supervisord enabled=yes state=started

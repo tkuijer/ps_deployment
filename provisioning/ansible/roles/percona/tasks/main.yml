@@ -1,0 +1,19 @@
+---
+#- name: Add Percona Repository public key
+#  apt_key: keyserver=keys.gnupg.net id=0x1C4CBDCDCD2EFD2A
+- name: Add Percona APT repository
+  apt_repository: repo="deb http://repo.percona.com/apt trusty main" update_cache=yes
+- name: Add Percona APT Source repository
+  apt_repository: repo="deb-src http://repo.percona.com/apt trusty main" update_cache=yes
+- name: Install Percona SQL Server
+  apt: name={{ item }} state=present force=yes
+  with_items:
+    - percona-server-server-5.6
+    - percona-server-client-5.6
+    - python-mysqldb
+- name: Replace MySQL Configuration
+  copy: src=my.cnf dest=/etc/mysql/my.cnf
+  notify:
+    - restart mysql
+- name: Add MySQL Admin user
+  mysql_user: name=root password="" priv=*.*:ALL state=present host="%"

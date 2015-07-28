@@ -1,0 +1,14 @@
+---
+# Install and configure mailcatcher
+- name: Install Ruby
+  apt: name={{ item }} state=present
+  with_items:
+  - ruby
+  - ruby-dev
+  - libsqlite3-dev
+- name: Install Mailcatcher gem
+  gem: name=mailcatcher state=present user_install=no
+- name: Copy supervisord script
+  copy: src=mailcatcher.conf dest=/etc/supervisord/supervisord.conf.d/mailcatcher.conf
+  notify:
+    - restart supervisord

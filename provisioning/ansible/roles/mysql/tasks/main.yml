@@ -1,0 +1,13 @@
+---
+- name: Install MySQL Server
+  apt: name={{ item }} state=present
+  with_items:
+    - mysql-server
+    - mysql-client
+    - python-mysqldb
+- name: Replace MySQL Configuration
+  copy: src=my.cnf dest=/etc/mysql/my.cnf
+  notify:
+    - restart mysql
+- name: Add MySQL Admin user
+  mysql_user: name=root password="" priv=*.*:ALL state=present host="%"

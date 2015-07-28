@@ -1,0 +1,10 @@
+---
+# Install and configure Node.js
+- name: Install Ruby
+  apt: name={{ item }} state=present
+  with_items:
+  - ruby
+  - ruby-dev
+  - libsqlite3-dev
+- name: Install Mailcatcher gem
+  gem: name=mailcatcher state=present

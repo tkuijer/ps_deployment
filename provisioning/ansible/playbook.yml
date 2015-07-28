@@ -1,0 +1,22 @@
+---
+- hosts: web
+  sudo: yes
+  gather_facts: false
+  roles:
+    - common
+    - webserver
+    - php
+    - supervisord
+    - beanstalkd
+    - git
+    - mailcatcher
+    - nodejs
+    - grunt
+    - bower
+
+
+- hosts: mysql
+  gather_facts: false
+  roles:
+    - common
+    - percona

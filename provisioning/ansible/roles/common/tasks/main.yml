@@ -1,0 +1,18 @@
+---
+# Common tasks
+- name: Add leaseweb mirror to hosts file for faster lookup
+  lineinfile: dest=/etc/hosts regexp='^94\.75\.223\.121' line='94.75.223.121 mirror.nl.leaseweb.net' state=present
+- name: Add dotdeb mirror to hosts file for faster lookup
+  lineinfile: dest=/etc/hosts regexp='^195\.154\.242\.153' line='195.154.242.153 packages.dotdeb.org' state=present
+- name: Update sources.list with leaseweb mirror
+  copy: src=sources.list dest=/etc/apt/sources.list
+- name: Ensure APT is up to date
+  apt: update_cache=yes cache_valid_time=7200
+- name: Install build-essentials
+  apt: name=build-essential state=present
+- name: Install htop
+  apt: name=htop state=present
+- name: Install unzip
+  apt: name=unzip state=present
+- name: Install Curl client
+  apt: name=curl state=present
