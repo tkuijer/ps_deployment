@@ -1,7 +1,7 @@
 <?php
 
 // All Deployer recipes are based on `recipe/common.php`.
-require 'recipe/common.php';
+require __DIR__.'/deployer/common.php';
 
 // Define a server for deployment.
 // Let's name it "prod" and use port 22.
@@ -16,14 +16,13 @@ server('vagrant', '192.168.33.10', 22)
 // If you're not using a forward agent, then the server has to be able to clone
 // your project from this repository.
 set('repository', 'git@github.com:tkuijer/ps_deployment.git');
-
 set('shared_dirs', ['web/img']);
-
 set('shared_files', ['web/config/settings.inc.php']);
-
-set('writable_dirs', ['web/img', 'web/cache', 'web/themes/default-bootstrap/cache']);
-
+set('writable_dirs', ['web/img', 'web/cache', 'web/log', 'web/themes/default-bootstrap/cache']);
 set('keep_releases', 5);
+set('writable_use_sudo', true);
+set('chown_user', 'www-data');
+set('chown_group', 'www-data');
 
 /**
  * Main task
@@ -32,6 +31,9 @@ task('deploy', [
     'deploy:prepare',
     'deploy:release',
     'deploy:update_code',
+    'deploy:writable',
+    'deploy:shared',
+    'deploy:chown',
     'deploy:symlink',
     'cleanup',
 ])->desc('Deploy your project');

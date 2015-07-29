@@ -1,6 +1,6 @@
 <?php
-define('_DB_SERVER_', 'localhost');
-define('_DB_NAME_', 'prestashop_2015');
+define('_DB_SERVER_', '10.110.110.202');
+define('_DB_NAME_', 'Singlespeed_2015');
 define('_DB_USER_', 'root');
 define('_DB_PASSWD_', 'root');
 define('_DB_PREFIX_', 'ps_');
